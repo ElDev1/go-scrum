@@ -29,7 +29,7 @@ export const TaskForm = () => {
 
     const formik = useFormik({ initialValues, validationSchema, onSubmit })
 
-    const { handleSubmit, handleChange, errors } = formik
+    const { handleSubmit, handleChange, errors, touched, handleBlur } = formik
 
     return (
         <section className="task-form">
@@ -37,27 +37,27 @@ export const TaskForm = () => {
             <form onSubmit={handleSubmit}>
                 <div>
                     <div>
-                        <input name="title" onChange={handleChange} placeholder='title'/>
+                        <input name="title" className={errors.title ? 'error': ''} onChange={handleChange} onBlur={handleBlur} placeholder='title'/>
+                    {errors.title && touched.title && <span className='error-mesagge'>{errors.title}</span>}
                     </div>
-                    {errors.title && <span>{errors.title}</span>}
                     <div>
-                        <select name='status' onChange={handleChange}>
+                        <select name='status' className={errors.status ? 'error': ''} onChange={handleChange} onBlur={handleBlur}>
                         <option value=''>Select a state</option>
                             <option value="new">New</option>
                             <option value="inProcess">in Process</option>
                             <option value="finished">Finished</option>
                         </select>
+                    {errors.status && touched.status && <span className='error-mesagge'>{errors.status}</span>}
                     </div>
-                    {errors.status && <span>{errors.status}</span>}
                     <div>
-                        <select name='priority' onChange={handleChange}>
+                        <select name='priority' className={errors.priority ? 'error': ''} onChange={handleChange} onBlur={handleBlur}>
                         <option value=''>Select priority</option>
                             <option value="low">Low</option>
                             <option value="medium">Medium</option>
                             <option value="high">High</option>
                         </select>
+                    {errors.priority && touched.priority && <span className='error-mesagge'>{errors.priority}</span>}
                     </div>
-                    {errors.priority && <span>{errors.priority}</span>}
                 </div>
                 <div>
                     <textarea name='description' onChange={handleChange} placeholder='description' />
