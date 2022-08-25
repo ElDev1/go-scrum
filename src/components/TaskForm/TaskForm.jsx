@@ -1,5 +1,6 @@
 import './TaskForm.styles.css'
 import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 export const TaskForm = () => {
     const initialValues = {
@@ -14,9 +15,21 @@ export const TaskForm = () => {
       alert()
     }
 
-    const formik = useFormik({ initialValues,  onSubmit })
+    const required = '* this field is obligatory'
 
-    const { handleSubmit, handleChange } = formik
+    const validationSchema = () =>
+    Yup.object().shape({
+        title: Yup.string()
+        .min(6, "the minimum number of characters required is 6")
+        .required(required),
+        status: Yup.string().required(required),
+        description: Yup.string().required(required),
+        importance: Yup.string().required(required),
+    });
+
+    const formik = useFormik({ initialValues, validationSchema, onSubmit })
+
+    const { handleSubmit, handleChange, errors } = formik
 
     return (
         <section className="task-form">
@@ -26,6 +39,7 @@ export const TaskForm = () => {
                     <div>
                         <input name="title" onChange={handleChange} placeholder='title'/>
                     </div>
+                    {errors.title && <span>{errors.title}</span>}
                     <div>
                         <select name='status' onChange={handleChange}>
                         <option value=''>Select a state</option>
@@ -34,6 +48,7 @@ export const TaskForm = () => {
                             <option value="finished">Finished</option>
                         </select>
                     </div>
+                    {errors.status && <span>{errors.status}</span>}
                     <div>
                         <select name='priority' onChange={handleChange}>
                         <option value=''>Select priority</option>
@@ -42,6 +57,7 @@ export const TaskForm = () => {
                             <option value="high">High</option>
                         </select>
                     </div>
+                    {errors.priority && <span>{errors.priority}</span>}
                 </div>
                 <div>
                     <textarea name='description' onChange={handleChange} placeholder='description' />
