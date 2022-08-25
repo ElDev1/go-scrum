@@ -2,8 +2,9 @@ import './App.css';
 
 import { lazy, Suspense } from 'react';
 
-import { Login } from './components/views/Login/Login';
+import { Login } from './components/views/auth/Login/Login.jsx';
 import { Tasks } from './components/views/Tasks/Tasks'
+import { Register } from './components/views/auth/Register/Register'
 
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -69,6 +70,17 @@ export const App = () => {
               <Suspense fallback={<>...</>}>
                 <Error404 />
               </Suspense>
+          </motion.div>} />
+        <Route 
+        path='/register' 
+        element={
+          <motion.div 
+            className='page' 
+            initial="out" 
+            animate='in' 
+            exit='out' 
+            variants={pageTransition}>
+              <Register />
           </motion.div>} />
       </Routes>
     </AnimatePresence>

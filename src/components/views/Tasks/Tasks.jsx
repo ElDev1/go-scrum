@@ -1,7 +1,7 @@
 import './Task.styles.css'
 import { useResize } from '../../../hook/useResize'
 import { Header } from  '../../Header/Header'
-import { cardsData } from './'
+import { cardsData } from './data'
 import { Card } from '../../Card/Card'
 import { TaskForm } from '../../TaskForm/TaskForm'
 

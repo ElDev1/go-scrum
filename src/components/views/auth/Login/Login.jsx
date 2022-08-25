@@ -1,6 +1,6 @@
 import { useFormik } from "formik"
-import './Login.styles.css'
-import { useNavigate } from "react-router-dom"
+import '../Auth.styles.css'
+import { useNavigate, Link } from "react-router-dom"
 
 
 export const Login = () => {
@@ -59,6 +59,9 @@ export const Login = () => {
             </div>
             <div>
                 <button type='submit'>Login</button>
+            </div>
+            <div>
+                <Link to='/register'>Register</Link>
             </div>
             </form>
         </div>    
