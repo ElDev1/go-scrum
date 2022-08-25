@@ -3,6 +3,7 @@ import { useResize } from '../../../hook/useResize'
 import { Header } from  '../../Header/Header'
 import { cardsData } from './'
 import { Card } from '../../Card/Card'
+import { TaskForm } from '../../TaskForm/TaskForm'
 
 export const Tasks = () => {
 
@@ -22,6 +23,7 @@ export const Tasks = () => {
     <>
       <Header />
       <main>
+        <TaskForm />
         <section className='wrapper_list'>
           <div className='list_header'>
             <h2>My Task</h2>
