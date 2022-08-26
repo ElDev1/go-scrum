@@ -1,9 +1,21 @@
 import { useFormik } from "formik"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import '../../auth/Auth.styles.css'
 import * as Yup from 'yup'
 
 export const Register = () => {
+
+    const [data, setData] = useState()
+
+    useEffect(() => {
+        fetch('https://goscrum-api.alkemy.org/auth/data')
+            .then(response => response.json())
+            .then(data => setData(data.result))
+    },[])
+
+    console.log({data})
+
     const initialValues = {
         email: '',
         password: '',
@@ -87,8 +99,9 @@ export const Register = () => {
                 className={errors.role && touched.role ? 'error': ''}
                 >
                     <option value=''>Select your rol</option>
-                    <option value='Team Member'>Team Member</option>
-                    <option value='Team Leader'>Team Leader</option>
+                    {data?.Rol?.map(option => (
+                        <option key={option} value={option}>{option}</option>
+                    ))}
                 </select> 
                 {errors.role && touched.role && <span className='error-mesagge'>{errors.role}</span>}
             </div>
@@ -101,30 +114,32 @@ export const Register = () => {
                 value={values.continent}
                 className={errors.continent && touched.continent ? 'error': ''}
                 >
-                     <option value=''>Select a continent</option>
-                    <option value='America'>America</option>
-                    <option value='Europe'>Europe</option>
-                    <option value='Other'>Other</option>
+                    <option value=''>Select a continent</option>
+                    {data?.continente?.map(option => (
+                        <option key={option} value={option}>{option}</option>
+                    ))}
                 </select> 
                 {errors.continent && touched.continent && <span className='error-mesagge'>{errors.continent}</span>}
             </div>
-            <div>
-                <label>Region</label>
-                <select 
-                name='region' 
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.region}
-                className={errors.region && touched.region ? 'error': ''}
-                >
-                    <option value=''>Select a region</option>
-                    <option value='Latam'>Latam</option>
-                    <option value='Brasil'>Brasil</option>
-                    <option value='North America'>North America</option>
-                    <option value='Other'>Other</option>
-                </select> 
-                {errors.region && touched.region && <span className='error-mesagge'>{errors.region}</span>}
-            </div>
+            {values.continent === 'America' && (
+                <div>
+                    <label>Region</label>
+                    <select 
+                    name='region' 
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.region}
+                    className={errors.region && touched.region ? 'error': ''}
+                    >
+                        <option value=''>Select a region</option>
+                        {data?.region?.map(option => (
+                            <option key={option} value={option}>{option}</option>
+                        ))}
+                    </select> 
+                    {errors.region && touched.region && <span className='error-mesagge'>{errors.region}</span>}
+                </div>
+            )}
+     
             <div>
                 <button type='submit'>Register</button>
             </div>
