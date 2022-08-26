@@ -7,13 +7,15 @@ import { v4 as uuidv4 } from "uuid"
 import { Switch, FormControlLabel } from '@mui/material'
 import { useNavigate } from "react-router-dom"
 
+const { REACT_APP_API_ENDPOINT } = process.env
+
 export const Register = () => {
 
     const [data, setData] = useState()
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetch('https://goscrum-api.alkemy.org/auth/data')
+        fetch(`${REACT_APP_API_ENDPOINT}/auth/data`)
             .then(response => response.json())
             .then(data => setData(data.result))
     },[])
@@ -50,9 +52,9 @@ export const Register = () => {
     }
 
     const onSubmit = () => {
-        const teamID = !values.teamID ? uuidv4() : values.teamID;
+        const teamID = !values.teamId ? uuidv4() : values.teamId;
     
-        fetch(`https://goscrum-api.alkemy.org/auth/data`, {
+        fetch(`${REACT_APP_API_ENDPOINT}/auth/data`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
