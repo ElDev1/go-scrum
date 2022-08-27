@@ -8,13 +8,13 @@ import { swal } from "../../../../utils/swal"
 const { REACT_APP_API_ENDPOINT: API_ENDPOINT } = process.env 
 
 export const Login = () => {
+    
     const navigate = useNavigate()
 
     const initialValues = {
         userName: '',
         password: '',
     }
-
 
     const required = '* this field is obligatory'
 
