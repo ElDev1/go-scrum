@@ -3,6 +3,8 @@ import '../Auth.styles.css'
 import { useNavigate, Link } from "react-router-dom"
 import * as Yup from 'yup'
 
+import { swal } from "../../../../utils/swal"
+
 const { REACT_APP_API_ENDPOINT: API_ENDPOINT } = process.env 
 
 export const Login = () => {
@@ -39,8 +41,12 @@ export const Login = () => {
           })
             .then((response) => response.json())
             .then(data => {
-                navigate('/', { replace: true })
-                localStorage.setItem('token', data?.result?.token)
+                if(data.status_code === 200) {
+                    localStorage.setItem('token', data?.result?.token)
+                    navigate('/', { replace: true })
+                } else {
+                    swal()
+                }
             })
     }
 

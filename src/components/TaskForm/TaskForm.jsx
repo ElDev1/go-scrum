@@ -1,18 +1,37 @@
 import './TaskForm.styles.css'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const { REACT_APP_API_ENDPOINT: API_ENDPOINT } = process.env
+
 
 export const TaskForm = () => {
     const initialValues = {
         title: '',
         status: '',
-        priority: '',
+        importance: '',
         description: '',
     }
 
 
     const onSubmit = () => {
-      alert()
+        fetch(`${API_ENDPOINT}/task`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                task: values
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+                resetForm()
+                toast('Task created !')
+              })
     }
 
     const required = '* this field is obligatory'
@@ -29,7 +48,7 @@ export const TaskForm = () => {
 
     const formik = useFormik({ initialValues, validationSchema, onSubmit })
 
-    const { handleSubmit, handleChange, errors, touched, handleBlur } = formik
+    const { handleSubmit, handleChange, errors, touched, handleBlur, values, resetForm } = formik
 
     return (
         <section className="task-form">
@@ -37,33 +56,37 @@ export const TaskForm = () => {
             <form onSubmit={handleSubmit}>
                 <div>
                     <div>
-                        <input name="title" className={errors.title ? 'error': ''} onChange={handleChange} onBlur={handleBlur} placeholder='title'/>
+                        <input name="title" className={errors.title && touched.title ? 'error': ''} value={values.title} onChange={handleChange} onBlur={handleBlur} placeholder='title'/>
                     {errors.title && touched.title && <span className='error-mesagge'>{errors.title}</span>}
                     </div>
                     <div>
-                        <select name='status' className={errors.status ? 'error': ''} onChange={handleChange} onBlur={handleBlur}>
+                        <select name='status' value={values.status} className={errors.status && touched.status ? 'error': ''} onChange={handleChange} onBlur={handleBlur}>
                         <option value=''>Select a state</option>
-                            <option value="new">New</option>
-                            <option value="inProcess">in Process</option>
-                            <option value="finished">Finished</option>
+                            <option value="NEW">New</option>
+                            <option value="IN PROGRESS">in Process</option>
+                            <option value="FINISHED">Finished</option>
                         </select>
                     {errors.status && touched.status && <span className='error-mesagge'>{errors.status}</span>}
                     </div>
                     <div>
-                        <select name='priority' className={errors.priority ? 'error': ''} onChange={handleChange} onBlur={handleBlur}>
-                        <option value=''>Select priority</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
+                        <select name='importance' value={values.importance} className={errors.importance && touched.importance ? 'error': ''} onChange={handleChange} onBlur={handleBlur}>
+                        <option value=''>Select importance</option>
+                            <option value="LOW">Low</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="HIGH">High</option>
                         </select>
-                    {errors.priority && touched.priority && <span className='error-mesagge'>{errors.priority}</span>}
+                    {errors.importance && touched.importance && <span className='error-mesagge'>{errors.importance}</span>}
                     </div>
                 </div>
                 <div>
-                    <textarea name='description' onChange={handleChange} placeholder='description' />
+                    <textarea name='description' value={values.description} className={errors.description && touched.description ? 'error' : ''} onBlur={handleBlur} onChange={handleChange} placeholder='description' />
+                    {errors.description && touched.description && (
+                        <span className='error-message'>{errors.title}</span>
+                    )}
                 </div>
                 <button type='submit'>Create</button>
             </form>
+            <ToastContainer />
         </section>
     )
 }
