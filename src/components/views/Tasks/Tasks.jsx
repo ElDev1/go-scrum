@@ -5,6 +5,7 @@ import { Card } from '../../Card/Card'
 import { TaskForm } from '../../TaskForm/TaskForm'
 import { useState, useEffect } from "react"
 import Skeleton from "react-loading-skeleton";
+import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material'
 
 const { REACT_APP_API_ENDPOINT: API_ENDPOINT } = process.env
 
@@ -12,11 +13,13 @@ export const Tasks = () => {
 
   const [list, setList] = useState(null);
   const [loading, setLoading] = useState(false)
+  const [renderList, setRenderList] = useState(null);
+  const [tasksfromWho, setTasksfromWho] = useState("ALL");
   const { isPhone } = useResize()
 
   useEffect(() => {
     setLoading(true)
-    fetch(`${API_ENDPOINT}/task`, {
+    fetch(`${API_ENDPOINT}/task${tasksfromWho === 'ME' ? '/me' : ''}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + localStorage.getItem('token'),
@@ -25,9 +28,10 @@ export const Tasks = () => {
       .then(response => response.json())
       .then(data => {
         setList(data.result)
+        setRenderList(data.result)
         setLoading(false)  
       })
-  }, [])
+  }, [tasksfromWho])
 
   const limitString = (str) => {
     if(str.length > 370)
@@ -36,29 +40,45 @@ export const Tasks = () => {
   }
 
   const renderAllCards = () => {
-    return list?.map((data) => (
+    return renderList?.map((data) => (
       <Card key={data._id} data={data}/>
     ));
   };
 
   const renderNewCards = () => {
-    return list
+    return renderList
       ?.filter(data => data.status === 'NEW')
       .map(data => <Card key={data._id} data={data}/>)
   }
 
   const renderInProgressCards = () => {
-    return list
+    return renderList
       ?.filter(data => data.status === 'IN PROGRESS')
       .map(data => <Card key={data._id} data={data}/>)
   }
 
   const renderFinishedCards = () => {
-    return list
+    return renderList
       ?.filter(data => data.status === 'FINISHED')
       .map(data => <Card key={data._id} data={data}/>)
   }
 
+  const handleChangeImportance = (event) => {
+    if (event.currentTarget.value === "ALL") setRenderList(list);
+    else
+      setRenderList(
+        list.filter((data) => data.importance === event.currentTarget.value)
+      );
+  };
+
+  const handleDelete = (id) => {
+    
+  };
+
+  const handleEditCardStatus = (data) => {
+  
+  } 
+  
   return (
     <>
       <Header />
@@ -68,8 +88,41 @@ export const Tasks = () => {
           <div className='list_header'>
             <h2>My Task</h2>
           </div>
+          <div className="filters">
+            <FormControl>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                onChange={(event) => setTasksfromWho(event.currentTarget.value)}
+              >
+                <FormControlLabel
+                  value="ALL"
+                  control={<Radio />}
+                  label="Todas"
+                />
+                <FormControlLabel
+                  value="ME"
+                  control={<Radio />}
+                  label="Mis tareas"
+                />
+              </RadioGroup>
+            </FormControl>
+            <div className="search">
+              <input
+                type="text"
+                placeholder="Buscar por título..."
+              />
+            </div>
+            <select name="importance" onChange={handleChangeImportance}>
+              <option value="">Select priority</option>
+              <option value="ALL">All</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+            </select>
+          </div>
           {isPhone ? (
-            !list?.length ? (
+            !renderList?.length ? (
               <div>there is no tasks created</div>
               ) : loading ? <Skeleton height={90}/> : (
                 <div className='list phone'>
@@ -78,7 +131,7 @@ export const Tasks = () => {
               )
             ) : (
             <div className='list_group'>
-              {!list?.length ? (
+              {!renderList?.length ? (
                   <div>there is no tasks created</div>
                 ) : loading ? <Skeleton /> : (
                   <>
