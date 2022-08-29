@@ -6,6 +6,7 @@ import { TaskForm } from '../../TaskForm/TaskForm'
 import { useState, useEffect } from "react"
 import Skeleton from "react-loading-skeleton";
 import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material'
+import debounce from 'lodash.debounce'
 
 const { REACT_APP_API_ENDPOINT: API_ENDPOINT } = process.env
 
@@ -15,6 +16,7 @@ export const Tasks = () => {
   const [loading, setLoading] = useState(false)
   const [renderList, setRenderList] = useState(null);
   const [tasksfromWho, setTasksfromWho] = useState("ALL");
+  const [search, setSearch ] = useState('')
   const { isPhone } = useResize()
 
   useEffect(() => {
@@ -33,6 +35,12 @@ export const Tasks = () => {
       })
   }, [tasksfromWho])
 
+  useEffect(() => {
+    if (search)
+      setRenderList(list.filter((data) => data.title.startsWith(search)));
+    else setRenderList(list);
+  }, [search]);
+
   const limitString = (str) => {
     if(str.length > 370)
       return { string: str.slice(0,367).concat('...'), addButton: true }
@@ -45,23 +53,18 @@ export const Tasks = () => {
     ));
   };
 
-  const renderNewCards = () => {
+  const renderColumnCards = (text) => {
     return renderList
-      ?.filter(data => data.status === 'NEW')
-      .map(data => <Card key={data._id} data={data}/>)
-  }
-
-  const renderInProgressCards = () => {
-    return renderList
-      ?.filter(data => data.status === 'IN PROGRESS')
-      .map(data => <Card key={data._id} data={data}/>)
-  }
-
-  const renderFinishedCards = () => {
-    return renderList
-      ?.filter(data => data.status === 'FINISHED')
-      .map(data => <Card key={data._id} data={data}/>)
-  }
+      ?.filter((data) => data.status === text)
+      .map((data) => (
+        <Card
+          key={data._id}
+          data={data}
+          deleteCard={handleDelete}
+          editCardStatus={handleEditCardStatus}
+        />
+      ));
+  };
 
   const handleChangeImportance = (event) => {
     if (event.currentTarget.value === "ALL") setRenderList(list);
@@ -78,6 +81,10 @@ export const Tasks = () => {
   const handleEditCardStatus = (data) => {
   
   } 
+
+  const handleSearch = debounce(event => {
+    setSearch(event?.target?.value)
+  },1000)
   
   return (
     <>
@@ -110,7 +117,8 @@ export const Tasks = () => {
             <div className="search">
               <input
                 type="text"
-                placeholder="Buscar por título..."
+                placeholder="Find by title..."
+                onChange={handleSearch}
               />
             </div>
             <select name="importance" onChange={handleChangeImportance}>
@@ -137,15 +145,15 @@ export const Tasks = () => {
                   <>
                     <div className="list">
                             <h3>New</h3>
-                            {renderNewCards()}
+                            {renderColumnCards('NEW')}
                           </div>
                           <div className="list">
                             <h3>In progress</h3>
-                            {renderInProgressCards()}
+                            {renderColumnCards('IN PROGRESS')}
                           </div>
                           <div className="list">
                             <h3>Finished</h3>
-                            {renderFinishedCards()}
+                            {renderColumnCards('FINISHED')}
                       </div>    
                   </>
                 )}
