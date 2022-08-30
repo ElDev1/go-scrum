@@ -76,8 +76,8 @@ export const Register = () => {
             navigate("/registered/" + data?.result?.user?.teamID, {
               replace: true,
             })
-          );
-      };
+          )
+      }
 
     const formik = useFormik({ initialValues, validationSchema, onSubmit })
 
