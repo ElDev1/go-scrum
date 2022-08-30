@@ -7,39 +7,40 @@ import { useState, useEffect } from "react"
 import Skeleton from "react-loading-skeleton";
 import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import debounce from 'lodash.debounce'
-
-const { REACT_APP_API_ENDPOINT: API_ENDPOINT } = process.env
+import { useSelector, useDispatch } from 'react-redux'
+import { getTask } from '../../../store/actions/taskActions'
 
 export const Tasks = () => {
 
   const [list, setList] = useState(null);
-  const [loading, setLoading] = useState(false)
   const [renderList, setRenderList] = useState(null);
   const [tasksfromWho, setTasksfromWho] = useState("ALL");
   const [search, setSearch ] = useState('')
   const { isPhone } = useResize()
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    setLoading(true)
-    fetch(`${API_ENDPOINT}/task${tasksfromWho === 'ME' ? '/me' : ''}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    })
-      .then(response => response.json())
-      .then(data => {
-        setList(data.result)
-        setRenderList(data.result)
-        setLoading(false)  
-      })
+    dispatch(getTask(tasksfromWho === 'ME' ? '/me' : ''))
   }, [tasksfromWho])
+
+  const { loading, error, task } = useSelector(state => {
+    return state.taskReducer
+  })
+
+  useEffect(() => {
+    if(task?.length) {
+      setList(task)
+      setRenderList(task)
+    }
+  },[task])
 
   useEffect(() => {
     if (search)
       setRenderList(list.filter((data) => data.title.startsWith(search)));
     else setRenderList(list);
   }, [search]);
+
+  if(error) return <div>Error</div>
 
   const renderAllCards = () => {
     return renderList?.map((data) => (
