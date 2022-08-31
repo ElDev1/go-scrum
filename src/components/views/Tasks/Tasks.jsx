@@ -44,7 +44,10 @@ export const Tasks = () => {
 
   const renderAllCards = () => {
     return renderList?.map((data) => (
-      <Card key={data._id} data={data}/>
+      <Card 
+        key={data._id} 
+        data={data}
+        deleteCard={handleDelete}/>
     ));
   };
 
@@ -70,7 +73,7 @@ export const Tasks = () => {
   };
 
   const handleDelete = (id) => {
-    
+    dispatch(dispatch())
   };
 
   const handleEditCardStatus = (data) => {
