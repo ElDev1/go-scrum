@@ -8,7 +8,7 @@ import Skeleton from "react-loading-skeleton";
 import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import debounce from 'lodash.debounce'
 import { useSelector, useDispatch } from 'react-redux'
-import { getTask } from '../../../store/actions/taskActions'
+import { getTask, deleteTask, editTaskStatus } from '../../../store/actions/taskActions'
 
 export const Tasks = () => {
 
@@ -21,7 +21,7 @@ export const Tasks = () => {
 
   useEffect(() => {
     dispatch(getTask(tasksfromWho === 'ME' ? '/me' : ''))
-  }, [tasksfromWho])
+  }, [tasksfromWho, dispatch])
 
   const { loading, error, task } = useSelector(state => {
     return state.taskReducer
@@ -47,9 +47,11 @@ export const Tasks = () => {
       <Card 
         key={data._id} 
         data={data}
-        deleteCard={handleDelete}/>
-    ));
-  };
+        deleteCard={handleDelete}
+        editCardStatus={handleEditCardStatus}
+        />
+      ))
+  }
 
   const renderColumnCards = (text) => {
     return renderList
@@ -73,11 +75,11 @@ export const Tasks = () => {
   };
 
   const handleDelete = (id) => {
-    dispatch(dispatch())
+    dispatch(deleteTask(id))
   };
 
   const handleEditCardStatus = (data) => {
-  
+    dispatch(editTaskStatus(data))
   } 
 
   const handleSearch = debounce(event => {
