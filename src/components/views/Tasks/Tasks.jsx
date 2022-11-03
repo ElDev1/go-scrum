@@ -1,38 +1,48 @@
-import './Task.styles.css'
-import { useResize } from '../../../hook/useResize'
-import { Header } from  '../../Header/Header'
-import { Card } from '../../Card/Card'
-import { TaskForm } from '../../TaskForm/TaskForm'
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Skeleton from "react-loading-skeleton";
-import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material'
-import debounce from 'lodash.debounce'
-import { useSelector, useDispatch } from 'react-redux'
-import { getTask, deleteTask, editTaskStatus } from '../../../store/actions/taskActions'
+import {
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormControlLabel,
+} from "@mui/material";
+import debounce from "lodash.debounce";
+import "react-loading-skeleton/dist/skeleton.css";
+
+import "./Task.styles.css";
+import {
+  getTasks,
+  deleteTask,
+  editTaskStatus,
+} from "../../../store/actions/taskActions";
+import { useResize } from "../../../hook/useResize";
+import { Header } from "../../Header/Header";
+import { TaskForm } from "../../TaskForm/TaskForm";
+import { Card } from "../../Card/Card";
 
 export const Tasks = () => {
-
   const [list, setList] = useState(null);
   const [renderList, setRenderList] = useState(null);
   const [tasksfromWho, setTasksfromWho] = useState("ALL");
-  const [search, setSearch ] = useState('')
-  const { isPhone } = useResize()
-  const dispatch = useDispatch()
+  const { isPhone } = useResize();
+  const [search, setSearch] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getTask(tasksfromWho === 'ME' ? '/me' : ''))
-  }, [tasksfromWho, dispatch])
+    dispatch(getTasks(tasksfromWho === "ME" ? "me" : ""));
+  }, [tasksfromWho, dispatch]);
 
-  const { loading, error, task } = useSelector(state => {
-    return state.taskReducer
-  })
+  const { tasks, error, loading } = useSelector((state) => {
+    return state.tasksReducer;
+  });
 
   useEffect(() => {
-    if(task?.length) {
-      setList(task)
-      setRenderList(task)
+    if (tasks?.length) {
+      setList(tasks);
+      setRenderList(tasks);
     }
-  },[task])
+  }, [tasks]);
 
   useEffect(() => {
     if (search)
@@ -40,18 +50,16 @@ export const Tasks = () => {
     else setRenderList(list);
   }, [search]);
 
-  if(error) return <div>Error</div>
-
   const renderAllCards = () => {
     return renderList?.map((data) => (
-      <Card 
-        key={data._id} 
+      <Card
+        key={data._id}
         data={data}
         deleteCard={handleDelete}
         editCardStatus={handleEditCardStatus}
-        />
-      ))
-  }
+      />
+    ));
+  };
 
   const renderColumnCards = (text) => {
     return renderList
@@ -74,26 +82,28 @@ export const Tasks = () => {
       );
   };
 
+  const handleSearch = debounce((event) => {
+    setSearch(event?.target?.value);
+  }, 1000);
+
   const handleDelete = (id) => {
-    dispatch(deleteTask(id))
+    dispatch(deleteTask(id));
   };
 
   const handleEditCardStatus = (data) => {
-    dispatch(editTaskStatus(data))
-  } 
+    dispatch(editTaskStatus(data));
+  };
 
-  const handleSearch = debounce(event => {
-    setSearch(event?.target?.value)
-  },1000)
-  
+  if (error) return <div>There's an error</div>;
+
   return (
     <>
       <Header />
-      <main>
+      <main id="tasks">
         <TaskForm />
-        <section className='wrapper_list'>
-          <div className='list_header'>
-            <h2>My Task</h2>
+        <div className="wrapper_list">
+          <div className="list_header">
+            <h2>My Tasks</h2>
           </div>
           <div className="filters">
             <FormControl>
@@ -117,7 +127,7 @@ export const Tasks = () => {
             <div className="search">
               <input
                 type="text"
-                placeholder="Find by title..."
+                placeholder="Buscar por título..."
                 onChange={handleSearch}
               />
             </div>
@@ -132,35 +142,37 @@ export const Tasks = () => {
           {isPhone ? (
             !renderList?.length ? (
               <div>there is no tasks created</div>
-              ) : loading ? <Skeleton height={90}/> : (
-                <div className='list phone'>
-                  {renderAllCards()}
-                </div>
-              )
+            ) : loading ? (
+              <Skeleton />
             ) : (
-            <div className='list_group'>
+              <div className="list phone">{renderAllCards()}</div>
+            )
+          ) : (
+            <div className="list_group">
               {!renderList?.length ? (
-                  <div>there is no tasks created</div>
-                ) : loading ? <Skeleton /> : (
-                  <>
-                    <div className="list">
-                            <h3>New</h3>
-                            {renderColumnCards('NEW')}
-                          </div>
-                          <div className="list">
-                            <h3>In progress</h3>
-                            {renderColumnCards('IN PROGRESS')}
-                          </div>
-                          <div className="list">
-                            <h3>Finished</h3>
-                            {renderColumnCards('FINISHED')}
-                      </div>    
-                  </>
-                )}
+                <div>there is no tasks created</div>
+              ) : loading ? (
+                <Skeleton />
+              ) : (
+                <>
+                  <div className="list">
+                    <h3>New</h3>
+                    {renderColumnCards("NEW")}
+                  </div>
+                  <div className="list">
+                    <h3>In progress</h3>
+                    {renderColumnCards("IN_PROGRESS")}
+                  </div>
+                  <div className="list">
+                    <h3>Finished</h3>
+                    {renderColumnCards("FINISHED")}
+                  </div>
+                </>
+              )}
             </div>
-          )}   
-        </section>
+          )}
+        </div>
       </main>
     </>
-  )
-}
+  );
+};

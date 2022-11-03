@@ -6,6 +6,7 @@ export const swal = () => {
     Swal.fire({
         title: 'wrong credentials',
         text: 'please introduce valid user name and password',
+        confirmButtonText: "Accept",
         width: '400px',
         timer: 10000,
         timerProgressBar: true,
