@@ -115,19 +115,19 @@ export const Tasks = () => {
                 <FormControlLabel
                   value="ALL"
                   control={<Radio />}
-                  label="Todas"
+                  label="All"
                 />
                 <FormControlLabel
                   value="ME"
                   control={<Radio />}
-                  label="Mis tareas"
+                  label="My tasks"
                 />
               </RadioGroup>
             </FormControl>
             <div className="search">
               <input
                 type="text"
-                placeholder="Buscar por título..."
+                placeholder="Search by title..."
                 onChange={handleSearch}
               />
             </div>
@@ -150,7 +150,7 @@ export const Tasks = () => {
           ) : (
             <div className="list_group">
               {!renderList?.length ? (
-                <div>there is no tasks created</div>
+                <div>no tasks created</div>
               ) : loading ? (
                 <Skeleton />
               ) : (

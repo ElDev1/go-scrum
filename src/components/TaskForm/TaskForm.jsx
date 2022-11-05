@@ -66,7 +66,7 @@ export const TaskForm = () => {
               name="title"
               onChange={handleChange}
               onBlur={handleBlur}
-              placeholder="Título"
+              placeholder="Title"
               className={errors.title && touched.title ? "error" : ""}
               value={values.title}
             />
@@ -85,7 +85,7 @@ export const TaskForm = () => {
               <option value="">Select a state</option>
               <option value="NEW">New</option>
               <option value="IN PROGRESS">In progress</option>
-              <option value="FINISHED">finished</option>
+              <option value="FINISHED">Finished</option>
             </select>
             {errors.status && touched.status && (
               <span className="error-message">{errors.status}</span>
@@ -113,7 +113,7 @@ export const TaskForm = () => {
           <textarea
             name="description"
             onChange={handleChange}
-            placeholder="Descripción"
+            placeholder="Description"
             onBlur={handleBlur}
             className={errors.description && touched.description ? "error" : ""}
             value={values.description}
