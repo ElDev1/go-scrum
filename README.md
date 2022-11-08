@@ -19,3 +19,5 @@ You can manage authentication, different roles and permissions for creating, edi
 - React router
 - material UI
 
+[Live Demo](https://eldev1.github.io/go-scrum/)
+
